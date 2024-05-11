@@ -5,9 +5,8 @@ namespace WinFormsApp5
     {
         private Graphics graphics;
         private int resolution;
-        private bool[,] field;
-        private int rows;
-        private int columns;
+        private GameEngine engine;
+
 
         public Form1()
         {
@@ -20,70 +19,35 @@ namespace WinFormsApp5
             numResolution.Enabled = false;
             numDensity.Enabled = false;
             resolution = (int)numResolution.Value;
-            rows = pictureBox1.Height / resolution;
-            columns = pictureBox1.Width / resolution;
-            field = new bool[columns, rows];
-            Random rnd = new Random();
-            for (int x = 0; x < columns; x++)
-                for (int y = 0; y < rows; y++)
-                {
-                    field[x, y] = rnd.Next((int)numDensity.Value) == 0;
-                }
+
+            engine = new GameEngine(
+                rows: pictureBox1.Height / resolution,
+                columns: pictureBox1.Width / resolution,
+                (int)numDensity.Value
+                );
+
             pictureBox1.Image = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             graphics = Graphics.FromImage(pictureBox1.Image);
             timer1.Start();
 
         }
-        private void NextGeneration()
+        private void DrawNextGeneration()
         {
             graphics.Clear(Color.Black);
-            var newfield = new bool[columns, rows];
-            for (int x = 0; x < columns; x++)
-                for (int y = 0; y < rows; y++)
-                {
-                    var neightCount = CountNeighbours(x, y);
-                    var haslife = field[x, y];
-                    if (!haslife && neightCount == 3)
-                    {
-                        newfield[x, y] = true;
-                    }
-                    else if (haslife && (neightCount < 2 || neightCount > 3))
-                    {
-                        newfield[x, y] = false;
-                    }
-                    else
-                    {
-                        newfield[x, y] = field[x, y];
-                    }
+            var field = engine.GetCurrentGeneration();
 
-                    if (haslife)
-                    {
-                        graphics.FillRectangle(Brushes.Crimson, x * resolution, y * resolution, resolution-1, resolution-1);
-                    }
-                }
-
-            field = newfield;
-            pictureBox1.Refresh();
-
-        }
-        private int CountNeighbours(int x, int y)
-        {
-            int count = 0;
-            for (int i = -1; i < 2; i++)
+            for (int x = 0; x < field.GetLength(0); x++)
             {
-                for (int j = -1; j < 2; j++)
+                for (int y = 0; y < field.GetLength(1); y++)
                 {
-                    int col = (x + i + columns) % columns;
-                    int row = (y + j + rows) % rows;
-
-                    bool isSelfChecking = col == x && row == y;
-                    var haslife = field[col, row];
-                    if (haslife && !isSelfChecking)
-                        count++;
+                    if (field[x, y])
+                        graphics.FillRectangle(Brushes.Crimson, x * resolution, y * resolution, resolution - 1, resolution - 1);
                 }
             }
-            return count;
+            pictureBox1.Refresh();
+            engine.NextGeneration();
         }
+
         private void StopGame()
         {
             if (!timer1.Enabled)
@@ -94,7 +58,7 @@ namespace WinFormsApp5
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
-            NextGeneration();
+            DrawNextGeneration();
         }
 
         private void bStart_Click(object sender, EventArgs e)
@@ -107,57 +71,31 @@ namespace WinFormsApp5
             StopGame();
         }
 
-        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (!timer1.Enabled) return;
-            if (e.Button == MouseButtons.Left)
-            {
-                var x = e.Location.X / resolution;
-                var y = e.Location.Y / resolution;
-                var validationPassed = ValidationMousePosition(x, y);
-                if (validationPassed)
-                    field[x, y] = true;
-            }
-            if (e.Button == MouseButtons.Right)
-            {
-                var x = e.Location.X / resolution;
-                var y = e.Location.Y / resolution;
-                var validationPassed = ValidationMousePosition(x, y);
-                if (validationPassed)
-                    field[x, y] = false;
-            }
-        }
-
-        private bool ValidationMousePosition(int x, int y)
-        {
-            return x >= 0 && y >= 0 && x < columns && y < rows;
-        }
-
         private void pictureBox1_MouseMove_1(object sender, MouseEventArgs e)
         {
-            if(!timer1.Enabled) return;
+            //if (!timer1.Enabled) return;
+            //if (e.Button == MouseButtons.Left)
+            //{
+            //    var x = e.Location.X / resolution;
+            //    var y = e.Location.Y / resolution;
+            //    var validationPassed = ValidationMousePosition(x, y);
+            //    if (validationPassed)
+            //        field[x, y] = true;
+            //}
+            //if (e.Button == MouseButtons.Right)
+            //{
+            //    var x = e.Location.X / resolution;
+            //    var y = e.Location.Y / resolution;
+            //    var validationPassed = ValidationMousePosition(x, y);
+            //    if (validationPassed)
+            //        field[x, y] = false;
+            //}
+        }
 
-            if(e.Button == MouseButtons.Left)
-            {
-                
-                var x= e.Location.X / resolution;
-                var y= e.Location.Y / resolution;
-                var validationPassed= ValidationMousePosition(x, y);
-                if (validationPassed)
-                    field[x,y]= true;
-            }
-            if(e.Button == MouseButtons.Right)
-            {
-                var x = e.Location.X / resolution;
-                var y = e.Location.Y / resolution;
-                var validationPassed = ValidationMousePosition(x, y);
-                if (validationPassed)
-                    field[x, y] = false;
-            }
-        }
-        private bool ValidateMousePosition(int x, int y)
-        {
-            return x>=0 && y>=0 && x < columns &&y < rows;
-        }
+        //private bool ValidationMousePosition(int x, int y)
+        //{
+        //    return x >= 0 && y >= 0 && x < columns && y < rows;
+        //}
+
     }
 }
