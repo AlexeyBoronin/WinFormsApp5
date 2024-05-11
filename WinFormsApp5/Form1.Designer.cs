@@ -144,6 +144,7 @@
             pictureBox1.Size = new Size(2261, 972);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
+            pictureBox1.MouseMove += pictureBox1_MouseMove_1;
             // 
             // timer1
             // 
