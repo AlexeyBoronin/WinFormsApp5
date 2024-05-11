@@ -31,7 +31,7 @@
             components = new System.ComponentModel.Container();
             splitContainer1 = new SplitContainer();
             bStop = new Button();
-            кСтарт = new Button();
+            bStart = new Button();
             numDensity = new NumericUpDown();
             label2 = new Label();
             numResolution = new NumericUpDown();
@@ -59,7 +59,7 @@
             // splitContainer1.Panel1
             // 
             splitContainer1.Panel1.Controls.Add(bStop);
-            splitContainer1.Panel1.Controls.Add(кСтарт);
+            splitContainer1.Panel1.Controls.Add(bStart);
             splitContainer1.Panel1.Controls.Add(numDensity);
             splitContainer1.Panel1.Controls.Add(label2);
             splitContainer1.Panel1.Controls.Add(numResolution);
@@ -83,16 +83,16 @@
             bStop.UseVisualStyleBackColor = true;
             bStop.Click += bStop_Click;
             // 
-            // кСтарт
+            // bStart
             // 
-            кСтарт.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            кСтарт.Location = new Point(16, 157);
-            кСтарт.Name = "кСтарт";
-            кСтарт.Size = new Size(117, 41);
-            кСтарт.TabIndex = 4;
-            кСтарт.Text = "Start";
-            кСтарт.UseVisualStyleBackColor = true;
-            кСтарт.Click += кСтарт_Click;
+            bStart.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            bStart.Location = new Point(16, 157);
+            bStart.Name = "bStart";
+            bStart.Size = new Size(117, 41);
+            bStart.TabIndex = 4;
+            bStart.Text = "Start";
+            bStart.UseVisualStyleBackColor = true;
+            bStart.Click += bStart_Click;
             // 
             // numDensity
             // 
@@ -174,7 +174,7 @@
 
         private SplitContainer splitContainer1;
         private Button bStop;
-        private Button кСтарт;
+        private Button bStart;
         private NumericUpDown numDensity;
         private Label label2;
         private NumericUpDown numResolution;

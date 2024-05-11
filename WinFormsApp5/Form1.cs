@@ -8,106 +8,129 @@ namespace WinFormsApp5
         private bool[,] field;
         private int rows;
         private int columns;
+
         public Form1()
         {
             InitializeComponent();
         }
-        private void StarGame()
+        private void StartGame()
         {
             if (timer1.Enabled)
                 return;
-
-            numResolution.Enabled=false;
-            numDensity.Enabled=false;
-
+            numResolution.Enabled = false;
+            numDensity.Enabled = false;
             resolution = (int)numResolution.Value;
-            rows=pictureBox1.Height/resolution;
-            columns=pictureBox1.Width/resolution;
-            field = new bool[rows, columns];
-            
+            rows = pictureBox1.Height / resolution;
+            columns = pictureBox1.Width / resolution;
+            field = new bool[columns, rows];
+            Random rnd = new Random();
+            for (int x = 0; x < columns; x++)
+                for (int y = 0; y < rows; y++)
+                {
+                    field[x, y] = rnd.Next((int)numDensity.Value) == 0;
+                }
             pictureBox1.Image = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             graphics = Graphics.FromImage(pictureBox1.Image);
             timer1.Start();
-            //graphics.FillRectangle(Brushes.Crimson, 0, 0, resolution, resolution);
-            Random rnd = new Random();
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < columns; j++)
-                {
-                    field[i, j] = rnd.Next((int)numDensity.Value) == 0;
-                }
-            }
-        }
-        private void StopGame()
-        {
-            if(!timer1.Enabled)
-                return;
-            timer1.Stop();
-            numResolution.Enabled = true;
-            numDensity.Enabled = true;
 
         }
         private void NextGeneration()
         {
             graphics.Clear(Color.Black);
-            var newfield=new bool[rows, columns];
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < columns; j++)
+            var newfield = new bool[columns, rows];
+            for (int x = 0; x < columns; x++)
+                for (int y = 0; y < rows; y++)
                 {
-                    var count=Count(i, j);
-                    var haslife=field[i, j];
-                    if(!haslife&&count==3)
+                    var neightCount = CountNeighbours(x, y);
+                    var haslife = field[x, y];
+                    if (!haslife && neightCount == 3)
                     {
-                        newfield[i, j] = true;
-                    }else if(haslife&&(count>3||count<2))
+                        newfield[x, y] = true;
+                    }
+                    else if (haslife && (neightCount < 2 || neightCount > 3))
                     {
-                        newfield[i,j] = false;
+                        newfield[x, y] = false;
                     }
                     else
                     {
-                        newfield[i,j]=field[i,j];
+                        newfield[x, y] = field[x, y];
                     }
-                    if(field[i, j])
+
+                    if (haslife)
                     {
-                        graphics.FillRectangle(Brushes.Crimson,i*resolution,j*resolution,resolution,resolution);
+                        graphics.FillRectangle(Brushes.Crimson, x * resolution, y * resolution, resolution, resolution);
                     }
                 }
-                
-                
-            }
-            field=newfield;
+
+            field = newfield;
             pictureBox1.Refresh();
+
         }
-        private int Count(int x, int y)
+        private int CountNeighbours(int x, int y)
         {
             int count = 0;
-
-            for(int i=-1; i<2;i++)
-                for(int j=-1; j<2;)
+            for (int i = -1; i < 2; i++)
+            {
+                for (int j = -1; j < 2; j++)
                 {
-                    int col = (x + i+columns)%columns;
-                    int row = (y + j+rows)%rows;
-                    var isSelfChecking = col == x && col == y;
+                    int col = (x + i + columns) % columns;
+                    int row = (y + j + rows) % rows;
+
+                    bool isSelfChecking = col == x && row == y;
                     var haslife = field[col, row];
-                    if(haslife &&!isSelfChecking)
+                    if (haslife && !isSelfChecking)
                         count++;
                 }
+            }
             return count;
+        }
+        private void StopGame()
+        {
+            if (!timer1.Enabled)
+                return;
+            timer1.Stop();
+            numResolution.Enabled = true;
+            numDensity.Enabled = true;
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
             NextGeneration();
         }
 
-        private void к—тарт_Click(object sender, EventArgs e)
+        private void bStart_Click(object sender, EventArgs e)
         {
-            StarGame();
+            StartGame();
         }
 
         private void bStop_Click(object sender, EventArgs e)
         {
             StopGame();
+        }
+
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!timer1.Enabled) return;
+            if (e.Button == MouseButtons.Left)
+            {
+                var x = e.Location.X / resolution;
+                var y = e.Location.Y / resolution;
+                var validationPassed = ValidationMousePosition(x, y);
+                if (validationPassed)
+                    field[x, y] = true;
+            }
+            if (e.Button == MouseButtons.Right)
+            {
+                var x = e.Location.X / resolution;
+                var y = e.Location.Y / resolution;
+                var validationPassed = ValidationMousePosition(x, y);
+                if (validationPassed)
+                    field[x, y] = false;
+            }
+        }
+
+        private bool ValidationMousePosition(int x, int y)
+        {
+            return x >= 0 && y >= 0 && x < columns && y < rows;
         }
     }
 }
