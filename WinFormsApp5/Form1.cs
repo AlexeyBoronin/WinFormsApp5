@@ -23,7 +23,7 @@ namespace WinFormsApp5
             engine = new GameEngine(
                 rows: pictureBox1.Height / resolution,
                 columns: pictureBox1.Width / resolution,
-                (int)numDensity.Value
+                density: (int)(numDensity.Minimum)+(int)numDensity.Maximum-(int)numDensity.Value
                 );
 
             pictureBox1.Image = new Bitmap(pictureBox1.Width, pictureBox1.Height);
@@ -73,29 +73,22 @@ namespace WinFormsApp5
 
         private void pictureBox1_MouseMove_1(object sender, MouseEventArgs e)
         {
-            //if (!timer1.Enabled) return;
-            //if (e.Button == MouseButtons.Left)
-            //{
-            //    var x = e.Location.X / resolution;
-            //    var y = e.Location.Y / resolution;
-            //    var validationPassed = ValidationMousePosition(x, y);
-            //    if (validationPassed)
-            //        field[x, y] = true;
-            //}
-            //if (e.Button == MouseButtons.Right)
-            //{
-            //    var x = e.Location.X / resolution;
-            //    var y = e.Location.Y / resolution;
-            //    var validationPassed = ValidationMousePosition(x, y);
-            //    if (validationPassed)
-            //        field[x, y] = false;
-            //}
+            if (!timer1.Enabled) return;
+            if (e.Button == MouseButtons.Left)
+            {
+                var x = e.Location.X / resolution;
+                var y = e.Location.Y / resolution;
+                engine.AddCell(x, y);
+            }
+            if (e.Button == MouseButtons.Right)
+            {
+                var x = e.Location.X / resolution;
+                var y = e.Location.Y / resolution;
+                engine.RemoteCell(x, y);
+            }
         }
 
-        //private bool ValidationMousePosition(int x, int y)
-        //{
-        //    return x >= 0 && y >= 0 && x < columns && y < rows;
-        //}
+        
 
     }
 }

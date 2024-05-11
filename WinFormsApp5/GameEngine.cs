@@ -84,5 +84,23 @@ namespace WinFormsApp5
             }
             return count;
         }
+        private bool ValidationCellPosition(int x, int y)
+        {
+            return x >= 0 && y >= 0 && x < columns && y < rows;
+        }
+        private void UpdateCell(int x, int y, bool state)
+        {
+           
+            if (ValidationCellPosition(x,y))
+                field[x, y] = state;
+        }
+        public void AddCell(int x, int y)
+        {
+            UpdateCell(x, y, state:true);
+        }
+        public void RemoteCell(int x, int y)
+        {
+            UpdateCell(x, y, state: false);
+        }
     }
 }

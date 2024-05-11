@@ -103,7 +103,7 @@
             numDensity.Size = new Size(120, 23);
             numDensity.TabIndex = 3;
             numDensity.TextAlign = HorizontalAlignment.Right;
-            numDensity.Value = new decimal(new int[] { 2, 0, 0, 0 });
+            numDensity.Value = new decimal(new int[] { 25, 0, 0, 0 });
             // 
             // label2
             // 
